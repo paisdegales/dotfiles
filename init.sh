@@ -1,13 +1,17 @@
 #!/bin/sh
 
+gen_timestamp(){
+	date +%Y-%m-%d-%H-%M
+}
+
 logmsg(){
-	echo "[$(date +%Y-%m-%d-%H-%M)] init.sh:" $@ >> /tmp/myinit.log
+	echo "[$(gen_timestamp)] init.sh:" $@ >> /tmp/myinit.log
 }
 
 # $1: basedir to search for a name such as $2
 # $2: the name of the xdgruntime directory
 get_first_xdgruntimedir(){
-	xdgruntime_dirname=$(( ls "$1" 2>/dev/null || echo "" ) | ( grep -e "$2" 2>/dev/null || echo "" ) | head -n 1)
+	xdgruntime_dirname=`( ls "$1" 2>/dev/null || echo "" ) | ( grep -e "$2" 2>/dev/null || echo "" ) | head -n 1`
 	if test -n "${xdgruntime_dirname}"; then
 		echo "$1/${xdgruntime_dirname}"
 	else
@@ -18,11 +22,6 @@ get_first_xdgruntimedir(){
 # The only problem with using 'mktemp' to set XDG_RUNTIME_DIR like this is that
 # some applications might still expect XDG_RUNTIME_DIR to be /run/user/${UID}
 create_xdgruntimedir_mktemp(){
-	if test -d "${XDG_RUNTIME_DIR}"; then
-		logmsg "'${XDG_RUNTIME_DIR}' already exists"
-		return
-	fi
-
 	# use a writable directory which will be consistently available accross reboots
 	mybasedir="/tmp"
 
@@ -52,7 +51,7 @@ create_xdgruntimedir_mktemp(){
 		return
 	fi
 
-	# check if the XDG_RUNTIME_DIR has the right ownership
+	# check if XDG_RUNTIME_DIR has the right ownership
 	if ! xdg_owner_uid=$(stat -c '%u' "$XDG_RUNTIME_DIR"); then
 		logmsg "could not stat '$XDG_RUNTIME_DIR'"
 		return
@@ -63,7 +62,7 @@ create_xdgruntimedir_mktemp(){
 		return
 	fi
 
-	# check if the XDG_RUNTIME_DIR has the right permissions
+	# check if XDG_RUNTIME_DIR has the right permissions
 	if ! xdg_perms=$(stat -c '%a' "$XDG_RUNTIME_DIR"); then
 		logmsg "could not stat '$XDG_RUNTIME_DIR'"
 		return
@@ -151,7 +150,7 @@ run_dwl(){
 }
 
 run_wl_compositor(){
-	logfile="wl-$(date +%Y-%m-%d-%H-%M).log"
+	logfile="wl-$(gen_timestamp).log"
 
 	for logdir in "$HOME/log" "$HOME/tmp" "$HOME" '/tmp' '.'; do
 		if test -d "${logdir}" && test -w "${logdir}"; then

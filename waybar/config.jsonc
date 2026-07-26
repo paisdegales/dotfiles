@@ -13,7 +13,8 @@
 	"modules-right": [
 		"network",
 		"bluetooth",
-		"wireplumber",
+		"wireplumber#sink",
+		"wireplumber#source",
 		"backlight",
 		"temperature",
 		"cpu",
@@ -87,9 +88,20 @@
 		"format-disconnected": "Disconnected ⚠",
 		"format-alt": "{ifname}: {ipaddr}/{cidr}"
 	},
-	"wireplumber": {
-		"format": "{volume}%",
-		"format-muted": ""
+	"wireplumber#sink": {
+		"format": "{volume}% {icon}",
+		"format-muted": "",
+		"format-icons": ["", "", ""],
+		"on-click": "helvum",
+		"on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+		"scroll-step": 5
+	},
+	"wireplumber#source": {
+		"node-type": "Audio/Source",
+		"format": "{volume}% ",
+		"format-muted": "",
+		"on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
+		"scroll-step": 5
 	},
 	"custom/power": {
 		"format" : "⏻ ",
