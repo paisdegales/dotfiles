@@ -43,6 +43,11 @@ if status is-interactive
 	# universal scope, but rather global scope
 	set --global fish_key_bindings fish_default_key_bindings
 
+	# set script variable to help detecting the current linux distro
+	if test -e /etc/os-release
+		set LINUX_DISTRO_NAME (cat /etc/os-release | grep "^NAME" | awk -F"=" '{ print $2 }' | tr -d "'")
+	end
+
 
 
 	#######################################
@@ -167,6 +172,9 @@ if status is-interactive
 		# -D file: save the output to a file
 		ss -Qp4ato
 	end
+
+	# if test "$LINUX_DISTRO_NAME" = 'Gentoo'
+	# end
 
 
 
